@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Speech-to-Text Transcription</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Speech-to-Text Transcription</h1>
+
+    <div class="controls">
+      <label for="language">Language:</label>
+      <select id="language">
+        <option value="en-US">English (US)</option>
+        <option value="en-GB">English (UK)</option>
+        <option value="es-ES">Spanish</option>
+        <option value="fr-FR">French</option>
+        <!-- Add more languages as needed -->
+      </select>
+
+      <button id="recordBtn">Start Recording</button>
+      <button id="stopBtn" disabled>Stop Recording</button>
+
+      <input type="file" id="fileInput" accept="audio/*">
+
+      <label class="switch">
+        <input type="checkbox" id="darkToggle">
+        <span class="slider round"></span> Dark Mode
+      </label>
+    </div>
+
+    <div id="waveform"></div>
+
+    <audio id="audioPlayer" controls class="hidden"></audio>
+
+    <div id="spinner" class="hidden">Processing...</div>
+
+    <div class="output">
+      <h2>Transcription</h2>
+      <p id="transcript">Your transcription will appear here.</p>
+      <a id="downloadBtn" class="hidden" href="#">Download Transcription</a>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/wavesurfer.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

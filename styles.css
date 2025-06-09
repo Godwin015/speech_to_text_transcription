@@ -1,0 +1,166 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #f5f5f5;
+  padding: 20px;
+  text-align: center;
+}
+
+.container {
+  background: white;
+  padding: 20px;
+  max-width: 600px;
+  margin: auto;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.controls {
+  margin-bottom: 20px;
+}
+
+#spinner {
+  color: #007BFF;
+  font-weight: bold;
+  margin: 15px 0;
+}
+
+.hidden {
+  display: none;
+}
+
+body.dark {
+  background: #121212;
+  color: #f5f5f5;
+}
+
+.container.dark {
+  background: #1e1e1e;
+  box-shadow: none;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+  margin-left: 10px;
+}
+.switch input { display: none; }
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0;
+  right: 0; bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 34px;
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px; width: 26px;
+  left: 4px; bottom: 4px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+input:checked + .slider {
+  background-color: #2196F3;
+}
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+/* Fade-in on page load */
+body {
+  animation: fadeIn 1s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Button hover animation */
+button:hover, #downloadBtn:hover {
+  transform: scale(1.05);
+  transition: transform 0.3s ease;
+}
+
+/* Spinner animation */
+#spinner {
+  font-weight: bold;
+  margin: 15px 0;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.3; }
+  50% { opacity: 1; }
+  100% { opacity: 0.3; }
+}
+
+/* Transcription fade-in animation */
+#transcript {
+  opacity: 0;
+  transition: opacity 0.6s ease-in;
+}
+
+#transcript.visible {
+  opacity: 1;
+}
+
+/* Fade-in on page load */
+body {
+  animation: fadeIn 1s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Button hover animation */
+button:hover, #downloadBtn:hover {
+  transform: scale(1.05);
+  transition: transform 0.3s ease;
+}
+
+/* Spinner animation */
+#spinner {
+  font-weight: bold;
+  margin: 15px 0;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.3; }
+  50% { opacity: 1; }
+  100% { opacity: 0.3; }
+}
+
+/* Transcription fade-in animation */
+#transcript {
+  opacity: 0;
+  transition: opacity 0.6s ease-in;
+}
+
+#transcript.visible {
+  opacity: 1;
+}
+
+/* Download button transition */
+#downloadBtn {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 8px 14px;
+  background-color: #007BFF;
+  color: white;
+  border-radius: 5px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+#downloadBtn:hover {
+  background-color: #0056b3;
+}
