@@ -91,7 +91,7 @@ setTimeout(() => {
   spinner.classList.remove("hidden");
 
   try {
-    const response = await fetch("https://your-backend-url/api/transcribe", {
+    const response = await fetch("https://speech-to-text-transcription.onrender.com/api/transcribe", {
       method: "POST",
       body: formData
     });
