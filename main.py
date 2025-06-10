@@ -18,7 +18,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.post("/api/transcribe")
+@app.post("https://speech-to-text-transcription.onrender.com/api/transcribe")
 async def transcribe_audio(audio: UploadFile = File(...), language: str = "en"):
     # Check file type (optional)
     if not audio.content_type.startswith("audio/"):
