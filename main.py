@@ -8,7 +8,7 @@ app = FastAPI()
 # Enable CORS so your frontend on GitHub Pages can talk to this backend
 origins = [
    # "http://localhost:3000",  # your local frontend testing address (optional)
-    "https://godwin015.github.io/speech_to_text_transcription/",  # replace with your actual GitHub Pages URL
+    "https://godwin015.github.io",  # replace with your actual GitHub Pages URL
     "https://speech-to-text-transcription.onrender.com",  # Render backend url!
 ]
 
