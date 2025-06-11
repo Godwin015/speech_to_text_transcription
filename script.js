@@ -75,18 +75,13 @@ fileInput.onchange = () => {
   }
 };
 
-// Send to backend
 async function sendAudioToBackend(audioBlob) {
   const formData = new FormData();
   formData.append("audio", audioBlob);
   formData.append("language", languageSelector.value);
 
-transcript.textContent = result.transcription || "No transcription found.";
-transcript.classList.remove("visible");
-setTimeout(() => {
-  transcript.classList.add("visible");
-}, 100);
-
+  transcript.textContent = "Transcribing...";
+  transcript.classList.remove("visible");
 
   spinner.classList.remove("hidden");
 
@@ -97,7 +92,13 @@ setTimeout(() => {
     });
 
     const result = await response.json();
+
     transcript.textContent = result.transcription || "No transcription found.";
+    transcript.classList.remove("visible");
+
+    setTimeout(() => {
+      transcript.classList.add("visible");
+    }, 100);
 
     if (result.transcription) {
       downloadBtn.classList.remove("hidden");
