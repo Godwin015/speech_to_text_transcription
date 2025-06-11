@@ -7,7 +7,7 @@ app = FastAPI()
 origins = [
    # "http://localhost:3000",  # your local frontend testing address (optional)
     "https://godwin015.github.io/speech_to_text_transcription/",  # replace with your actual GitHub Pages URL
-    "*",  # for testing you can allow all origins, but in production limit this!
+    "https://speech-to-text-transcription.onrender.com",  # Render backend url!
 ]
 
 app.add_middleware(
@@ -18,7 +18,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.post("https://speech-to-text-transcription.onrender.com/api/transcribe")
+@app.post("/api/transcribe")
 async def transcribe_audio(audio: UploadFile = File(...), language: str = "en"):
     # Check file type (optional)
     if not audio.content_type.startswith("audio/"):
