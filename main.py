@@ -4,8 +4,6 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-from fastapi.responses import FileResponse
-
 
 # Enable CORS so your frontend on GitHub Pages can talk to this backend
 origins = [
@@ -21,6 +19,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.get("/")
+async def root():
+    return {"message": "Speech-to-text transcription backend is running!"}
 
 @app.post("/api/transcribe")
 async def transcribe_audio(audio: UploadFile = File(...), language: str = "en"):
