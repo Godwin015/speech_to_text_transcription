@@ -1,7 +1,14 @@
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
+
 app = FastAPI()
+
+from fastapi.responses import FileResponse
+
+@app.get("/favicon.ico")
+async def favicon():
+    return FileResponse("path/to/your/favicon.ico")  # or return an empty 204
 
 # Enable CORS so your frontend on GitHub Pages can talk to this backend
 origins = [
