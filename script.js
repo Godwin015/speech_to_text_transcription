@@ -75,6 +75,7 @@ fileInput.onchange = () => {
   }
 };
 
+// Send audio to backend for transcription
 async function sendAudioToBackend(audioBlob) {
   const formData = new FormData();
   formData.append("audio", audioBlob);
@@ -82,7 +83,6 @@ async function sendAudioToBackend(audioBlob) {
 
   transcript.textContent = "Transcribing...";
   transcript.classList.remove("visible");
-
   spinner.classList.remove("hidden");
 
   try {
@@ -92,6 +92,7 @@ async function sendAudioToBackend(audioBlob) {
     });
 
     const result = await response.json();
+    console.log("Backend response:", result); // Debugging output
 
     transcript.textContent = result.transcription || "No transcription found.";
     transcript.classList.remove("visible");
@@ -105,7 +106,7 @@ async function sendAudioToBackend(audioBlob) {
       setupDownload(result.transcription);
     }
   } catch (error) {
-    console.error(error);
+    console.error("Transcription error:", error);
     transcript.textContent = "Error during transcription.";
   }
 
