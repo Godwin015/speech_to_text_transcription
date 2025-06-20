@@ -1,13 +1,14 @@
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from google.cloud import speech
-from google.oauth2 import service_account
 import os
-import json
+
+# Optional: Set this if not already done in your deployment environment
+# os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "path/to/your/service-account.json"
 
 app = FastAPI()
 
-# CORS settings (adjust origins as needed)
+# Allow CORS for your frontend URLs
 origins = [
     "https://godwin015.github.io",
     "https://speech-to-text-transcription.onrender.com",
@@ -32,24 +33,25 @@ async def transcribe_audio(audio: UploadFile = File(...), language: str = "en-US
 
     audio_bytes = await audio.read()
 
+    # 🔍 Debugging output
+    print("Audio Content Type:", audio.content_type)
+    print("Audio Size:", len(audio_bytes))  # in bytes
+
+    client = speech.SpeechClient()
+
+    config = speech.RecognitionConfig(
+        encoding=speech.RecognitionConfig.AudioEncoding.WEBM_OPUS,
+        sample_rate_hertz=48000,
+        language_code=language
+    )
+
+    audio_data = speech.RecognitionAudio(content=audio_bytes)
+
     try:
-        # Parse JSON string from environment variable
-        creds_info = json.loads(os.environ["GOOGLE_APPLICATION_CREDENTIALS"])
-        credentials = service_account.Credentials.from_service_account_info(creds_info)
-        client = speech.SpeechClient(credentials=credentials)
-
-        config = speech.RecognitionConfig(
-            encoding=speech.RecognitionConfig.AudioEncoding.WEBM_OPUS,
-            sample_rate_hertz=48000,
-            language_code=language
-        )
-
-        audio_data = speech.RecognitionAudio(content=audio_bytes)
-
         response = client.recognize(config=config, audio=audio_data)
 
         if not response.results:
-            return {"transcription": "No speech detected", "confidence": 0.0}
+            raise HTTPException(status_code=400, detail="No transcription found. Make sure the audio is clear and properly formatted.")
 
         result = response.results[0].alternatives[0]
         return {
@@ -58,4 +60,5 @@ async def transcribe_audio(audio: UploadFile = File(...), language: str = "en-US
         }
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        print("Transcription Error:", str(e))  # Show error in logs
+        raise HTTPException(status_code=500, detail="Transcription failed: " + str(e))
