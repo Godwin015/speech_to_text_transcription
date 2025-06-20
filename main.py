@@ -1,64 +1,59 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from google.cloud import speech
+from google.cloud.speech import RecognitionConfig, RecognitionAudio
 import os
-
-# Optional: Set this if not already done in your deployment environment
-# os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "path/to/your/service-account.json"
+import json
 
 app = FastAPI()
 
-# Allow CORS for your frontend URLs
-origins = [
-    "https://godwin015.github.io",
-    "https://speech-to-text-transcription.onrender.com",
-]
-
+# Enable CORS (adjust origins as needed)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],  # Update with your frontend URL in production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-@app.get("/")
-async def root():
-    return {"message": "Speech-to-text transcription backend is running!"}
+# ✅ Step 1: Create credential file dynamically from env var
+@app.on_event("startup")
+async def load_gcloud_credentials():
+    creds_json = os.getenv("GOOGLE_APPLICATION_CREDENTIALS_JSON")
+    if not creds_json:
+        raise RuntimeError("GOOGLE_APPLICATION_CREDENTIALS_JSON environment variable not set")
+    with open("gcloud-credentials.json", "w") as f:
+        f.write(creds_json)
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "gcloud-credentials.json"
 
+# ✅ Step 2: Transcription Endpoint
 @app.post("/api/transcribe")
-async def transcribe_audio(audio: UploadFile = File(...), language: str = "en-US"):
-    if not audio.content_type.startswith("audio/"):
-        raise HTTPException(status_code=400, detail="Invalid audio file type")
-
-    audio_bytes = await audio.read()
-
-    # 🔍 Debugging output
-    print("Audio Content Type:", audio.content_type)
-    print("Audio Size:", len(audio_bytes))  # in bytes
-
-    client = speech.SpeechClient()
-
-    config = speech.RecognitionConfig(
-        encoding=speech.RecognitionConfig.AudioEncoding.WEBM_OPUS,
-        sample_rate_hertz=48000,
-        language_code=language
-    )
-
-    audio_data = speech.RecognitionAudio(content=audio_bytes)
-
+async def transcribe_audio(audio: UploadFile = File(...)):
     try:
-        response = client.recognize(config=config, audio=audio_data)
+        audio_bytes = await audio.read()
+        print("Audio Content Type:", audio.content_type)
+        print("Audio Size:", len(audio_bytes))
 
-        if not response.results:
-            raise HTTPException(status_code=400, detail="No transcription found. Make sure the audio is clear and properly formatted.")
+        client = speech.SpeechClient()
 
-        result = response.results[0].alternatives[0]
-        return {
-            "transcription": result.transcript,
-            "confidence": result.confidence
-        }
+        audio_config = RecognitionConfig(
+            encoding=RecognitionConfig.AudioEncoding.WEBM_OPUS,
+            sample_rate_hertz=48000,
+            language_code="en-US"
+        )
+
+        audio_data = RecognitionAudio(content=audio_bytes)
+
+        response = client.recognize(config=audio_config, audio=audio_data)
+
+        # Extract transcription
+        if response.results:
+            transcript = response.results[0].alternatives[0].transcript
+        else:
+            transcript = "No transcription found"
+
+        return {"transcript": transcript}
 
     except Exception as e:
-        print("Transcription Error:", str(e))  # Show error in logs
-        raise HTTPException(status_code=500, detail="Transcription failed: " + str(e))
+        print("Error during transcription:", e)
+        return {"error": str(e)}
