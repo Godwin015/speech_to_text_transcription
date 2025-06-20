@@ -1,15 +1,16 @@
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-
+from google.cloud import speech
+from google.oauth2 import service_account
+import os
+import json
 
 app = FastAPI()
 
-
-# Enable CORS so your frontend on GitHub Pages can talk to this backend
+# CORS settings (adjust origins as needed)
 origins = [
-   # "http://localhost:3000",  # your local frontend testing address (optional)
-    "https://godwin015.github.io",  # replace with your actual GitHub Pages URL
-    "https://speech-to-text-transcription.onrender.com",  # Render backend url!
+    "https://godwin015.github.io",
+    "https://speech-to-text-transcription.onrender.com",
 ]
 
 app.add_middleware(
@@ -25,27 +26,36 @@ async def root():
     return {"message": "Speech-to-text transcription backend is running!"}
 
 @app.post("/api/transcribe")
-async def transcribe_audio(audio: UploadFile = File(...), language: str = "en"):
-    # Check file type (optional)
+async def transcribe_audio(audio: UploadFile = File(...), language: str = "en-US"):
     if not audio.content_type.startswith("audio/"):
         raise HTTPException(status_code=400, detail="Invalid audio file type")
-    
-    # Save uploaded file locally (just for demo)
-    contents = await audio.read()
-    filename = f"temp_{audio.filename}"
-    with open(filename, "wb") as f:
-        f.write(contents)
-    
-    # Here you will call your transcription logic (Google API, Whisper, etc)
-    # For now, return dummy response
-    transcription = f"Transcription for file {audio.filename} in language {language}"
-    confidence = 0.99  # Dummy confidence
 
-    # Remove temp file if you want (optional)
-    import os
-    os.remove(filename)
-    
-    return {
-        "transcription": transcription,
-        "confidence": confidence
-    }
+    audio_bytes = await audio.read()
+
+    try:
+        # Parse JSON string from environment variable
+        creds_info = json.loads(os.environ["GOOGLE_APPLICATION_CREDENTIALS"])
+        credentials = service_account.Credentials.from_service_account_info(creds_info)
+        client = speech.SpeechClient(credentials=credentials)
+
+        config = speech.RecognitionConfig(
+            encoding=speech.RecognitionConfig.AudioEncoding.WEBM_OPUS,
+            sample_rate_hertz=48000,
+            language_code=language
+        )
+
+        audio_data = speech.RecognitionAudio(content=audio_bytes)
+
+        response = client.recognize(config=config, audio=audio_data)
+
+        if not response.results:
+            return {"transcription": "No speech detected", "confidence": 0.0}
+
+        result = response.results[0].alternatives[0]
+        return {
+            "transcription": result.transcript,
+            "confidence": result.confidence
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
