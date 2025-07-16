@@ -12,7 +12,7 @@ const audioPlayer = document.getElementById("audioPlayer");
 const downloadBtn = document.getElementById("downloadBtn");
 
 // Set your backend URL
-const BACKEND_URL = "https://huggingface.co/spaces/Gaadwhin/speech_to_text_api/transcribe";
+const BACKEND_URL = "https://Gaadwhin-speech-to-text-api.hf.space/api/transcribe";
 
 // Initialize WaveSurfer
 const waveform = WaveSurfer.create({
