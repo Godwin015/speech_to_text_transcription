@@ -20,7 +20,7 @@ app.add_middleware(
 )
 
 # ✅ Load Whisper model once (outside route for efficiency)
-model = whisper.load_model("base")  # or use "tiny", "small", "medium", "large"
+model = whisper.load_model("tiny")  # or use "tiny", "small", "medium", "large"
 
 @app.get("/")
 async def root():
