@@ -11,6 +11,9 @@ const darkToggle = document.getElementById("darkToggle");
 const audioPlayer = document.getElementById("audioPlayer");
 const downloadBtn = document.getElementById("downloadBtn");
 
+// Set your backend URL
+const BACKEND_URL = "https://speech-to-text-transcription.onrender.com/api/transcribe";
+
 // Initialize WaveSurfer
 const waveform = WaveSurfer.create({
   container: "#waveform",
@@ -42,7 +45,7 @@ recordBtn.onclick = async () => {
   mediaRecorder.onstop = () => {
     const blob = new Blob(audioChunks, { type: "audio/webm" });
     const audioURL = URL.createObjectURL(blob);
-    
+
     waveform.load(audioURL);
     audioPlayer.src = audioURL;
     audioPlayer.classList.remove("hidden");
@@ -65,14 +68,21 @@ stopBtn.onclick = () => {
 // Upload audio file
 fileInput.onchange = () => {
   const file = fileInput.files[0];
-  if (file) {
-    const audioURL = URL.createObjectURL(file);
-    waveform.load(audioURL);
-    audioPlayer.src = audioURL;
-    audioPlayer.classList.remove("hidden");
-    downloadBtn.classList.add("hidden");
-    sendAudioToBackend(file);
+  if (!file) return;
+
+  // Optional: Validate audio type
+  if (!file.type.startsWith("audio/")) {
+    alert("Please upload a valid audio file.");
+    return;
   }
+
+  const audioURL = URL.createObjectURL(file);
+  waveform.load(audioURL);
+  audioPlayer.src = audioURL;
+  audioPlayer.classList.remove("hidden");
+  downloadBtn.classList.add("hidden");
+
+  sendAudioToBackend(file);
 };
 
 // Send audio to backend for transcription
@@ -86,13 +96,17 @@ async function sendAudioToBackend(audioBlob) {
   spinner.classList.remove("hidden");
 
   try {
-    const response = await fetch("https://speech-to-text-transcription.onrender.com/api/transcribe", {
+    const response = await fetch(BACKEND_URL, {
       method: "POST",
       body: formData
     });
 
+    if (!response.ok) {
+      throw new Error(`Server error: ${response.status}`);
+    }
+
     const result = await response.json();
-    console.log("Backend response:", result); // Debugging output
+    console.log("Backend response:", result);
 
     transcript.textContent = result.transcription || "No transcription found.";
     transcript.classList.remove("visible");
@@ -108,9 +122,9 @@ async function sendAudioToBackend(audioBlob) {
   } catch (error) {
     console.error("Transcription error:", error);
     transcript.textContent = "Error during transcription.";
+  } finally {
+    spinner.classList.add("hidden");
   }
-
-  spinner.classList.add("hidden");
 }
 
 // Download .txt
