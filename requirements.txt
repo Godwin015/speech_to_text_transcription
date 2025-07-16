@@ -1,5 +1,5 @@
 fastapi
 uvicorn[standard]
 python-multipart
-google-cloud-speech
-google-auth
+openai-whisper
+ffmpeg-python
