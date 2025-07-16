@@ -1,60 +1,50 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from google.cloud import speech
-from google.cloud.speech import RecognitionConfig, RecognitionAudio
+import whisper
+import tempfile
 import os
 
 app = FastAPI()
 
-# ✅ Enable CORS (update frontend domain in production)
+# ✅ Enable CORS for frontend and backend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://godwin015.github.io",  # your GitHub Pages frontend
-        "https://speech-to-text-transcription.onrender.com"  # your Render backend
+        "https://godwin015.github.io",
+        "https://speech-to-text-transcription.onrender.com"
     ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# ✅ Tell the Google SDK where the credentials are mounted
-# This path must match the path you used in Render's Secret Files
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "gcloud-credentials.json"
+# ✅ Load Whisper model once (outside route for efficiency)
+model = whisper.load_model("base")  # or use "tiny", "small", "medium", "large"
 
 @app.get("/")
 async def root():
-    return {"message": "Speech-to-text transcription backend is running!"}
+    return {"message": "Whisper-based transcription backend is running!"}
 
 @app.post("/api/transcribe")
-async def transcribe_audio(audio: UploadFile = File(...), language: str = "en-US"):
+async def transcribe_audio(audio: UploadFile = File(...), language: str = "en"):
     if not audio.content_type.startswith("audio/"):
         raise HTTPException(status_code=400, detail="Invalid audio file type")
 
     try:
-        audio_bytes = await audio.read()
-        print("Audio Content Type:", audio.content_type)
-        print("Audio Size:", len(audio_bytes))
+        # Save uploaded audio to temporary file
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".webm") as tmp:
+            tmp.write(await audio.read())
+            tmp_path = tmp.name
 
-        client = speech.SpeechClient()
+        # Transcribe using Whisper
+        result = model.transcribe(tmp_path, language=language)
 
-        config = RecognitionConfig(
-            encoding=RecognitionConfig.AudioEncoding.WEBM_OPUS,
-            sample_rate_hertz=48000,
-            language_code=language
-        )
+        # Clean up temp file
+        os.remove(tmp_path)
 
-        audio_data = RecognitionAudio(content=audio_bytes)
-
-        response = client.recognize(config=config, audio=audio_data)
-
-        if not response.results:
-            return {"transcription": "No speech detected", "confidence": 0.0}
-
-        result = response.results[0].alternatives[0]
         return {
-            "transcription": result.transcript,
-            "confidence": result.confidence
+            "transcription": result["text"],
+            "language_detected": result.get("language", "unknown")
         }
 
     except Exception as e:
