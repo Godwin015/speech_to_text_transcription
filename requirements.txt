@@ -1,6 +1,0 @@
-openai-whisper
-ffmpeg-python
-fastapi
-uvicorn[standard]
-python-multipart
-
