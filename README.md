@@ -1,88 +1,92 @@
-# 🗣️ Speech-to-Text Transcription App
+# 🎤 Speech-to-Text Transcription Tool
 
-This is a full-stack speech-to-text transcription tool built with:
+A lightweight **speech-to-text web application** that converts spoken words into text using **OpenAI Whisper API**. The app supports **multiple languages**, has a **colorful and responsive UI**, and is hosted with a **GitHub frontend** and a **Hugging Face backend** for easy access.
 
-- 🔧 **FastAPI** (Python backend)
-- 🧠 **OpenAI Whisper** (runs locally, no API key needed)
-- 🎙️ **MediaRecorder API** + Vanilla JS frontend
-- 📦 **Deployed on Render (backend)** & **GitHub Pages (frontend)**
+---
 
+## 🚀 Features
 
-## 🚀 Live Demo
+* **Real-time Speech Recognition** – Converts audio input into text seamlessly.
+* **Multi-Language Support** – Transcribes speech in various languages accurately.
+* **FastAPI Backend** – Handles transcription logic and API requests efficiently.
+* **Responsive, Colorful UI** – Animated, user-friendly interface for smooth interaction.
+* **Deployed Frontend & Backend** – Frontend hosted on **GitHub Pages**, backend on **Hugging Face Spaces**.
 
-- 🌐 Frontend: [https://godwin015.github.io](https://godwin015.github.io)
-- ⚙️ Backend: [https://speech-to-text-transcription.onrender.com](https://speech-to-text-transcription.onrender.com)
+---
 
+## 🛠 Tech Stack
+
+* **Frontend:** HTML, CSS, JavaScript
+* **Backend:** FastAPI, Python, OpenAI Whisper
+* **Deployment:** GitHub Pages (frontend), Hugging Face Spaces (backend)
+* **Other Tools:** FFmpeg, Python-Multipart
+
+---
+
+## 🔗 Live Demo
+
+**[Try the App Here](https://godwin015.github.io/speech_to_text_transcription/)**
+
+---
 
 ## 📂 Project Structure
 
-├── main.py # FastAPI backend with Whisper
-├── requirements.txt # Python dependencies
-├── render.yaml # Render deployment config
-├── index.html # Frontend HTML (GitHub Pages)
-├── script.js # JavaScript (audio recording, sending, etc.)
-├── styles.css # Custom CSS with dark mode
-└── README.md # Project documentation
+```
+speech_to_text_transcription/
+│
+├── frontend/              # HTML, CSS, JS files
+├── backend/               # FastAPI app, Whisper integration
+├── requirements.txt       # Backend dependencies
+├── Dockerfile             # For deployment
+└── README.md              # Project documentation
+```
 
+---
 
+## ⚙️ Setup Instructions
 
-## 🎯 Features
-
-- 🎤 Record audio directly in the browser
-- 📁 Upload audio files (`.webm`, `.mp3`, etc.)
-- 🌍 Language selection (English, Spanish, French, etc.)
-- 💬 Live transcription using OpenAI Whisper
-- 💡 Dark mode toggle
-- ⬇️ Download transcribed text
-
-
-## 🧠 How It Works
-
-1. Frontend records audio using `MediaRecorder`.
-2. Audio is sent to a FastAPI backend (`/api/transcribe`).
-3. The backend uses `whisper` to transcribe speech into text.
-4. The result is returned and displayed on the page.
-5. User can download transcription as `.txt`.
-
-
-## 📦 Installation (for local testing)
-
-### Backend
+### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/your-repo-name.git
-cd your-repo-name
+git clone https://github.com/Godwin015/speech_to_text_transcription.git
+cd speech_to_text_transcription
+```
+
+### 2. Install Backend Dependencies
+
+```bash
 pip install -r requirements.txt
-uvicorn main:app --reload
+```
 
-# Ubuntu/Debian
-sudo apt install ffmpeg
+### 3. Run the Backend Locally
 
-# Windows: https://ffmpeg.org/download.html
+```bash
+uvicorn app:app --reload
+```
 
-Frontend
-Open index.html directly in your browser
-Or host it with GitHub Pages.
+The API will run on `http://127.0.0.1:8000/`.
 
-⚙️ Deployment
-On Render (Backend)
-Render uses render.yaml to:
-Install ffmpeg
-Install Python packages
-Run FastAPI with uvicorn
-Push changes to GitHub or trigger manual deploy.
+### 4. Open the Frontend
 
-🧪 Tech Stack
-FastAPI – Python web framework
-OpenAI Whisper – Local speech-to-text transcription
-FFmpeg – Audio format handling
-Vanilla JS – Recording + file handling
-WaveSurfer.js – Audio waveform visualization
-Render – Backend deployment
-GitHub Pages – Frontend hosting
+Simply open `index.html` in your browser or deploy using GitHub Pages.
 
-🙋🏽‍♂️ Author
-Godwin Edward
-Cybersecurity & AI Student
-GitHub @godwin015
-LinkedIn https://www.linkedin.com/in/godwin-edward-25961825a/
+---
+
+## 💡 Future Improvements
+
+* Add **user authentication** to save transcriptions.
+* Support **file uploads (MP3/WAV)** for offline transcription.
+* Integrate **real-time streaming** for live captions.
+* Deploy on **Railway or Render** for faster backend performance.
+
+---
+
+## 🧑‍💻 Author
+
+**Godwin Edward**
+
+* Portfolio: [GitHub](https://github.com/Godwin015)
+* LinkedIn: *(https://www.linkedin.com/in/godwin-edward-25961825a/)*
+* Email: *(godwynedward015@gmail.com)*
+
+---
