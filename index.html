@@ -3,55 +3,94 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Speech-to-Text Transcription</title>
+  <title>Speech-to-Text | Edward Godwin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <div class="bg-glow"></div>
+
   <div class="container">
-    <h1>Speech-to-Text Transcription</h1>
-    <h1>-By Edward Godwin</h1>
+    <header>
+      <div class="header-main">
+        <h1>Speech-to-Text</h1>
+        <label class="theme-switch" title="Toggle Dark Mode">
+          <input type="checkbox" id="darkToggle">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <p class="subtitle">AI-Powered Transcription • Edward Godwin</p>
+    </header>
 
-    <div class="controls">
-      <label for="language">Language:</label>
-      <select id="language">
-        <option value="en">English</option>
-        <option value="es">Spanish</option>
-        <option value="fr">French</option>
-        <option value="de">German</option>
-        <option value="ha">Hausa</option>
-        <option value="yo">Yoruba</option>
-        <option value="ig">Igbo</option>
-        <!-- Add more supported Whisper languages as needed -->
-      </select>
+    <main class="glass-card">
+      <section class="settings">
+        <div class="field">
+          <label for="language">Source Language</label>
+          <select id="language">
+            <option value="en">English</option>
+            <option value="es">Spanish</option>
+            <option value="fr">French</option>
+            <option value="de">German</option>
+            <option value="ha">Hausa</option>
+            <option value="yo">Yoruba</option>
+            <option value="ig">Igbo</option>
+          </select>
+        </div>
+      </section>
 
-      <button id="recordBtn">Start Recording</button>
-      <button id="stopBtn" disabled>Stop Recording</button>
+      <section class="controls-grid">
+        <button id="recordBtn" class="btn btn-primary">
+          <i data-lucide="mic"></i>
+          <span>Start Recording</span>
+        </button>
+        <button id="stopBtn" class="btn btn-danger" disabled>
+          <i data-lucide="square"></i>
+          <span>Stop</span>
+        </button>
+      </section>
 
-      <label for="fileInput">Upload Audio File:</label>
-      <input type="file" id="fileInput" accept="audio/*">
+      <div class="divider"><span>OR</span></div>
 
-      <label class="switch">
-        <input type="checkbox" id="darkToggle">
-        <span class="slider round"></span> Dark Mode
-      </label>
-    </div>
+      <section class="upload-area">
+        <label for="fileInput" class="drop-zone">
+          <i data-lucide="upload-cloud"></i>
+          <p>Click to upload audio file</p>
+          <input type="file" id="fileInput" accept="audio/*" hidden>
+        </label>
+      </section>
 
-    <div id="waveform"></div>
+      <div class="visualizer-container">
+        <div id="waveform"></div>
+        <audio id="audioPlayer" controls class="hidden"></audio>
+      </div>
 
-    <audio id="audioPlayer" controls class="hidden"></audio>
+      <div id="spinner" class="hidden">
+        <div class="loader"></div>
+        <p>Analyzing audio...</p>
+      </div>
 
-    <div id="spinner" class="hidden">Processing...</div>
-
-    <div class="output">
-      <h2>Transcription</h2>
-      <p id="transcript">Your transcription will appear here.</p>
-      <a id="downloadBtn" class="hidden" type="text/plain" href="#">Download Transcription</a>
-    </div>
+      <div class="output-section">
+        <div class="output-header">
+          <h3>Transcription</h3>
+          <div class="output-actions">
+            <button id="copyBtn" class="action-link hidden" title="Copy to clipboard">
+              <i data-lucide="copy"></i> Copy
+            </button>
+            <a id="downloadBtn" class="action-link hidden" href="#">
+              <i data-lucide="download"></i> Download
+            </a>
+          </div>
+        </div>
+        <div class="transcript-display">
+          <p id="transcript">Ready for input...</p>
+        </div>
+      </div>
+    </main>
   </div>
 
-  <!-- Scripts -->
   <script src="https://unpkg.com/wavesurfer.js"></script>
   <script src="script.js"></script>
+  <script>lucide.createIcons();</script>
 </body>
 </html>
-
